@@ -1,0 +1,36 @@
+name: Validate Skill
+on: [push, pull_request]
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '20'}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: npm install -g skills
+      - run: chmod +x scripts/*.sh scripts/*.py
+
+      # Skill discovery (must succeed)
+      - run: skills add . --list
+
+      # Python syntax check on every script
+      - run: for f in scripts/*.py; do python3 -m py_compile "$f" || exit 1; done
+
+      # Bash syntax check on every script
+      - run: for f in scripts/*.sh; do bash -n "$f" || exit 1; done
+
+      # Structural integrity check (v19.0+)
+      # - All 82 sub-skills ≥100 lines (no stubs)
+      # - Version in SKILL.md / README.md / AGENTS.md all match
+      # - "Scripts (N)" heading matches actual script count
+      # - "Sub-Skill Routing (N" heading matches actual sub-skill directory count
+      # - Every sub-skill has required frontmatter + ≥3 sections + rules-like section
+      # - Every reference mentioned in SKILL.md exists in references/
+      - name: Run validate_skill.py
+        run: python3 scripts/validate_skill.py
+
+      # Install skill (final smoke test)
+      - run: skills add . -a claude-code -y
+        env: {DISABLE_TELEMETRY: '1'}

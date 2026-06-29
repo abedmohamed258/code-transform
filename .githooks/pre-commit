@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# pre-commit hook for OmniProject AI
+#
+# Runs validate_skill.py --quick before every commit.
+# Blocks the commit if any structural integrity check fails.
+#
+# To install (run once per clone):
+#   git config core.hooksPath .githooks
+#   chmod +x .githooks/pre-commit
+#
+# To bypass (emergency only, e.g. WIP commits):
+#   git commit --no-verify
+
+set -e
+
+# Resolve repo root (this script lives in .githooks/)
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+# Run quick validation (skips slow syntax checks — those run in CI)
+echo "🔍 Running validate_skill.py --quick..."
+python3 scripts/validate_skill.py --quick
+
+# Capture exit code
+EXIT_CODE=$?
+
+if [ $EXIT_CODE -ne 0 ]; then
+    echo ""
+    echo "❌ Commit blocked: skill validation failed."
+    echo ""
+    echo "To see full details, run: python3 scripts/validate_skill.py"
+    echo "To auto-fix heading count mismatches, run: python3 scripts/validate_skill.py --fix"
+    echo ""
+    echo "To bypass this check (NOT RECOMMENDED), use: git commit --no-verify"
+    exit 1
+fi
+
+echo "✅ Skill validation passed. Proceeding with commit."
+exit 0

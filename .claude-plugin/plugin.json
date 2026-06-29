@@ -1,0 +1,10 @@
+{
+  "name": "code-transform",
+  "version": "12.1.0",
+  "description": "Complete code transformation toolkit",
+  "license": "MIT",
+  "homepage": "https://github.com/abedmohamed258/code-transform",
+  "skills": [
+    "skills/code-transform"
+  ]
+}

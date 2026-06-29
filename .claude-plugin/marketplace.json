@@ -1,0 +1,19 @@
+{
+  "name": "code-transform-marketplace",
+  "owner": {
+    "name": "code-transform-skill",
+    "url": "https://github.com/abedmohamed258/code-transform"
+  },
+  "metadata": {
+    "description": "Transform ANY application into its best version",
+    "version": "12.1.0",
+    "license": "MIT"
+  },
+  "skills": [
+    {
+      "name": "code-transform",
+      "description": "9-phase workflow",
+      "path": "skills/code-transform"
+    }
+  ]
+}
